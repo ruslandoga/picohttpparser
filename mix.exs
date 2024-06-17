@@ -40,6 +40,7 @@ defmodule PicoHTTPParser.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:bench), do: ["lib", "bench/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_env), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
