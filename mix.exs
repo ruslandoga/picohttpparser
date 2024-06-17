@@ -9,6 +9,7 @@ defmodule PicoHTTPParser.MixProject do
       app: :picohttpparser,
       version: @version,
       elixir: "~> 1.17",
+      elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:elixir_make | Mix.compilers()],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -36,6 +37,10 @@ defmodule PicoHTTPParser.MixProject do
       extra_applications: [:logger]
     ]
   end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:bench), do: ["lib", "bench/support"]
+  defp elixirc_paths(_env), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
