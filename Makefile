@@ -19,7 +19,7 @@ endif
 ifneq ($(DEBUG),)
 	CFLAGS += -g
 else
-	CFLAGS += -DNDEBUG=1 -O2
+	CFLAGS += -DNDEBUG=1 -O3
 endif
 
 ERL_CFLAGS ?= -I"$(ERL_EI_INCLUDE_DIR)"
