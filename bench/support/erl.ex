@@ -1,9 +1,9 @@
 defmodule Erl do
   def parse(request) do
-    {:ok, {:http_request, method, {:abs_path, path}, version}, rest} =
+    {:ok, {:http_request, method, path, version}, rest} =
       :erlang.decode_packet(:http_bin, request, [])
 
-    {method, path, version, rest |> parse_headers() |> :lists.reverse()}
+    {method, path, version, parse_headers(rest)}
   end
 
   defp parse_headers(rest) do
