@@ -16,6 +16,12 @@ ifeq ($(KERNEL_NAME), Darwin)
 	LDFLAGS += -dynamiclib -undefined dynamic_lookup
 endif
 
+ifneq ($(DEBUG),)
+	CFLAGS += -g
+else
+	CFLAGS += -DNDEBUG=1 -O2
+endif
+
 ERL_CFLAGS ?= -I"$(ERL_EI_INCLUDE_DIR)"
 
 all: $(PREFIX) $(BUILD) $(LIB_NAME)
