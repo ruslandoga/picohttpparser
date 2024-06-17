@@ -16,22 +16,6 @@ static ERL_NIF_TERM make_atom(ErlNifEnv *env, const char *atom_name) {
   return enif_make_atom(env, atom_name);
 }
 
-static ERL_NIF_TERM make_binary(ErlNifEnv *env, const void *bytes,
-                                unsigned int size) {
-  ErlNifBinary blob;
-  ERL_NIF_TERM term;
-
-  if (!enif_alloc_binary(size, &blob)) {
-    return make_atom(env, "out_of_memory");
-  }
-
-  memcpy(blob.data, bytes, size);
-  term = enif_make_binary(env, &blob);
-  enif_release_binary(&blob);
-
-  return term;
-}
-
 static ERL_NIF_TERM parse_request(ErlNifEnv *env, int argc,
                                   const ERL_NIF_TERM argv[]) {
   if (argc != 1) {
@@ -57,15 +41,20 @@ static ERL_NIF_TERM parse_request(ErlNifEnv *env, int argc,
     return make_atom(env, "error");
   }
 
-  ERL_NIF_TERM method_term = make_binary(env, method, method_len);
-  ERL_NIF_TERM path_term = make_binary(env, path, path_len);
+  ERL_NIF_TERM method_term = enif_make_sub_binary(
+      env, argv[0], method - (const char *)request_bin.data, method_len);
+  ERL_NIF_TERM path_term = enif_make_sub_binary(
+      env, argv[0], path - (const char *)request_bin.data, path_len);
   ERL_NIF_TERM minor_version_term = enif_make_int(env, minor_version);
 
   ERL_NIF_TERM headers_list = enif_make_list(env, 0);
   for (size_t i = 0; i < num_headers; i++) {
-    ERL_NIF_TERM name = make_binary(env, headers[i].name, headers[i].name_len);
-    ERL_NIF_TERM value =
-        make_binary(env, headers[i].value, headers[i].value_len);
+    ERL_NIF_TERM name = enif_make_sub_binary(
+        env, argv[0], headers[i].name - (const char *)request_bin.data,
+        headers[i].name_len);
+    ERL_NIF_TERM value = enif_make_sub_binary(
+        env, argv[0], headers[i].value - (const char *)request_bin.data,
+        headers[i].value_len);
     ERL_NIF_TERM header = enif_make_tuple2(env, name, value);
     headers_list = enif_make_list_cell(env, header, headers_list);
   }
