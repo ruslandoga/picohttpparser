@@ -1,5 +1,5 @@
-SRC = c_src/picohttpparser_nif.c c_src/picohttpparser/picohttpparser.c
-CFLAGS = -fPIC -Wall -fsanitize=address,undefined -I$(ERTS_INCLUDE_DIR) -I./c_src/picohttpparser
+SRC = c_src/picohttpparser_nif.c c_src/picohttpparser.c
+CFLAGS = -fPIC -Wall -I$(ERTS_INCLUDE_DIR) -I./c_src
 KERNEL_NAME := $(shell uname -s)
 
 PREFIX = $(MIX_APP_PATH)/priv
@@ -30,7 +30,6 @@ $(LIB_NAME): $(OBJ)
 
 $(PREFIX) $(BUILD):
 	mkdir -p $@
-	mkdir -p $@/picohttpparser
 
 clean:
 	$(RM) $(LIB_NAME) $(OBJ)
