@@ -39,6 +39,39 @@ jobs:
       - run: mix compile --warnings-as-errors
       - run: mix test
 
+  bench:
+    runs-on: ubuntu-latest
+
+    env:
+      MIX_ENV: bench
+
+    strategy:
+      matrix:
+        elixir: [1.17]
+        otp: [27]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: bench-${{ matrix.otp }}-${{ matrix.elixir }}-${{ github.head_ref || github.ref }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            bench-${{ matrix.otp }}-${{ matrix.elixir }}-${{ github.head_ref || github.ref }}-
+            bench-${{ matrix.otp }}-${{ matrix.elixir }}-refs/heads/master-
+
+      - run: mix deps.get --only $MIX_ENV
+      - run: mix compile --warnings-as-errors
+      - run: mix run bench/parse.exs
+
   format:
     runs-on: ubuntu-latest
     steps:
