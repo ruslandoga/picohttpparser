@@ -46,7 +46,7 @@ defmodule PicoHTTPParser.MixProject do
   defp deps do
     [
       {:benchee, "~> 1.3", only: :bench},
-      {:elixir_make, "~> 0.8.4", runtime: false},
+      {:elixir_make, "~> 0.9.0", runtime: false},
       {:cc_precompiler, "~> 0.1.10", runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.29", only: :dev}
