@@ -1,6 +1,6 @@
 # PicoHTTPParser
 
-An Elixir NIF for [h2o/picohttpparser.](https://github.com/h2o/picohttpparser)
+[h2o/picohttpparser](https://github.com/h2o/picohttpparser) bindings for Elixir.
 
 ## Installation
 
@@ -16,4 +16,4 @@ end
 
 ## Usage
 
-Please see [tests](./test/picohttpparser_test.exs) for examples.
+See [tests](./test/picohttpparser_test.exs) for examples.
