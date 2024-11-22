@@ -18,7 +18,7 @@ defmodule PicoHTTPParser.MixProject do
         licenses: ["MIT"],
         links: %{"GitHub" => @repo_url}
       ],
-      description: "PicoHTTPParser NIFs",
+      description: "PicoHTTPParser NIF",
       # docs
       name: "PicoHTTPParser",
       docs: [
@@ -33,9 +33,7 @@ defmodule PicoHTTPParser.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    [extra_applications: [:logger]]
   end
 
   # Specifies which paths to compile per environment.
@@ -48,7 +46,6 @@ defmodule PicoHTTPParser.MixProject do
     [
       {:benchee, "~> 1.3", only: :bench},
       {:elixir_make, "~> 0.8.4", runtime: false},
-      {:cc_precompiler, "~> 0.1.10", runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.29", only: :dev}
     ]
