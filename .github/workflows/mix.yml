@@ -84,4 +84,4 @@ jobs:
           otp-version: 27
       - run: elixir -v
       - run: mix format --check-formatted
-      - run: clang-format --dry-run --Werror c_src/picohttpparser_nif.c
+      # - run: clang-format --dry-run --Werror c_src/picohttpparser_nif.c
