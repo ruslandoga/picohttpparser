@@ -3,13 +3,11 @@
 #include <picohttpparser.h>
 #include <string.h>
 
-static ERL_NIF_TERM am_nil;
 static ERL_NIF_TERM am_badarg;
 
 static int
 on_load(ErlNifEnv *env, void **priv, ERL_NIF_TERM info)
 {
-  am_nil = enif_make_atom(env, "nil");
   am_badarg = enif_make_atom(env, "badarg");
   return 0;
 }
@@ -41,10 +39,10 @@ parse_request(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
                            &method, &method_len, &path, &path_len,
                            &minor_version, headers, &num_headers, 0);
 
-  // TODO
   if (pret < 0)
-    return am_nil;
+    return enif_make_int(env, pret);
 
+  ERL_NIF_TERM rest = enif_make_sub_binary(env, argv[0], pret, request_bin.size - pret);
   ERL_NIF_TERM method_term = enif_make_sub_binary(env, argv[0], method - (const char *)request_bin.data, method_len);
   ERL_NIF_TERM path_term = enif_make_sub_binary(env, argv[0], path - (const char *)request_bin.data, path_len);
   ERL_NIF_TERM minor_version_term = enif_make_int(env, minor_version);
@@ -59,11 +57,10 @@ parse_request(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     headers_list = enif_make_list_cell(env, header, headers_list);
   }
 
-  return enif_make_tuple4(env, method_term, path_term, minor_version_term, headers_list);
+  return enif_make_tuple5(env, method_term, path_term, minor_version_term, headers_list, rest);
 }
 
 static ErlNifFunc nif_funcs[] = {
-    // TODO yeilding
     {"parse_request", 1, parse_request, 0},
 };
 

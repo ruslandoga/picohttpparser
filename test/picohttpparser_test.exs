@@ -1,9 +1,21 @@
 defmodule PicoHTTPParserTest do
   use ExUnit.Case, async: true
 
+  test "incomplete packet" do
+    packet = "GET / HTTP/1.1\r\nHost: example.com\r\n"
+    assert PicoHTTPParser.parse_request(packet) == -2
+  end
+
+  test "request with body" do
+    packet = "POST / HTTP/1.1\r\nHost: example.com\r\nContent-Length: 5\r\n\r\nhello"
+
+    assert PicoHTTPParser.parse_request(packet) ==
+             {"POST", "/", 1, [{"Host", "example.com"}, {"Content-Length", "5"}], "hello"}
+  end
+
   test "it works" do
     packet = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"
-    assert PicoHTTPParser.parse_request(packet) == {"GET", "/", 1, [{"Host", "example.com"}]}
+    assert PicoHTTPParser.parse_request(packet) == {"GET", "/", 1, [{"Host", "example.com"}], ""}
 
     packet =
       "GET /wp-content/uploads/2010/03/hello-kitty-darth-vader-pink.jpg HTTP/1.1\r\n" <>
@@ -35,7 +47,7 @@ defmodule PicoHTTPParserTest do
                 {"Connection", "keep-alive"},
                 {"Cookie",
                  "wp_ozh_wsa_visits=2; wp_ozh_wsa_visit_lasttime=xxxxxxxxxx; __utma=xxxxxxxxx.xxxxxxxxxx.xxxxxxxxxx.xxxxxxxxxx.xxxxxxxxxx.x; __utmz=xxxxxxxxx.xxxxxxxxxx.x.x.utmccn=(referral)|utmcsr=reader.livedoor.com|utmcct=/reader/|utmcmd=referral"}
-              ]}
+              ], ""}
 
     assert Erl.parse(packet) ==
              {:GET, {:abs_path, "/wp-content/uploads/2010/03/hello-kitty-darth-vader-pink.jpg"},
@@ -63,7 +75,7 @@ defmodule PicoHTTPParserTest do
 
       assert PicoHTTPParser.parse_request(packet) ==
                {"GET", "http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:4000/echo_components", 1,
-                [{"host", "orange"}]}
+                [{"host", "orange"}], ""}
 
       # compare to
       assert :erlang.decode_packet(:http_bin, packet, []) ==
@@ -79,7 +91,7 @@ defmodule PicoHTTPParserTest do
 
       assert PicoHTTPParser.parse_request(packet) ==
                {"GET", "http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]/1234", 1,
-                [{"host", "orange"}]}
+                [{"host", "orange"}], ""}
 
       # compare to
       assert :erlang.decode_packet(:http_bin, packet, []) ==
@@ -93,7 +105,7 @@ defmodule PicoHTTPParserTest do
       packet = "GET http://[::1]/1234 HTTP/1.1\r\nhost: orange\r\n\r\n"
 
       assert PicoHTTPParser.parse_request(packet) ==
-               {"GET", "http://[::1]/1234", 1, [{"host", "orange"}]}
+               {"GET", "http://[::1]/1234", 1, [{"host", "orange"}], ""}
 
       # compare to
       assert :erlang.decode_packet(:http_bin, packet, []) ==
@@ -109,7 +121,7 @@ defmodule PicoHTTPParserTest do
 
       assert PicoHTTPParser.parse_request(packet) ==
                {"GET", "http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210:4000/echo_components", 1,
-                [{"host", "orange"}]}
+                [{"host", "orange"}], ""}
 
       # compare to
       assert :erlang.decode_packet(:http_bin, packet, []) ==
